@@ -27,7 +27,7 @@ Start the autonomous iteration loop to work on tasks continuously.
 - No arguments: Pick next from queue
 - With task: Add task to queue and start
 
-!bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/lib/loop-control.sh start "$1" 50
+!bash "${CLAUDE_PLUGIN_ROOT}/hooks/lib/loop-control.sh" start "$1" 50
 
 After starting, the orchestrator will take over. The Stop hook will manage continuations.
 

@@ -20,7 +20,7 @@ Displays:
 - Current work context
 - Recent history
 
-!bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/lib/loop-control.sh status && echo "" && "$CLAUDE_PROJECT_DIR"/.claude/hooks/lib/queue-manager.sh summary
+!bash "${CLAUDE_PLUGIN_ROOT}/hooks/lib/loop-control.sh" status && echo "" && "${CLAUDE_PLUGIN_ROOT}/hooks/lib/queue-manager.sh" summary
 
 ## Information Shown
 

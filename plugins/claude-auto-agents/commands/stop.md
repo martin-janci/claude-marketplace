@@ -19,7 +19,7 @@ Gracefully stop the autonomous iteration loop.
 3. Logs final state to history
 4. Returns control to user
 
-!bash "$CLAUDE_PROJECT_DIR"/.claude/hooks/lib/loop-control.sh stop
+!bash "${CLAUDE_PLUGIN_ROOT}/hooks/lib/loop-control.sh" stop
 
 ## Notes
 
