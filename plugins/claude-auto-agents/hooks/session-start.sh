@@ -5,7 +5,45 @@
 # It injects the STATUS protocol and loads the current work queue.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+
+# Initialize work directory if it doesn't exist
+if [[ ! -d "$PROJECT_DIR/work" ]]; then
+    mkdir -p "$PROJECT_DIR/work"
+
+    # Create queue.md
+    cat > "$PROJECT_DIR/work/queue.md" << 'QUEUE'
+# Work Queue
+
+## In Progress
+<!-- Items currently being worked on -->
+
+## Pending
+<!-- Items waiting to be picked up -->
+
+## Blocked
+<!-- Items that cannot proceed -->
+
+## Completed
+<!-- Reference - full history in history.md -->
+QUEUE
+
+    # Create history.md
+    cat > "$PROJECT_DIR/work/history.md" << 'HISTORY'
+# Work History
+
+## Completed Items
+
+| Date | ID | Summary | Agent | Iterations |
+|------|----|---------|-------|------------|
+HISTORY
+
+    # Create current.md
+    echo "# Current Work\n\nNo work in progress." > "$PROJECT_DIR/work/current.md"
+
+    # Create blockers.md
+    echo "# Blocked Items\n\nNo blocked items." > "$PROJECT_DIR/work/blockers.md"
+fi
 
 # Source library functions
 source "$SCRIPT_DIR/lib/loop-control.sh" 2>/dev/null || true
