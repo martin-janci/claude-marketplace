@@ -1,0 +1,12 @@
+{
+  "name": "claude-auto-agents",
+  "version": "1.0.0",
+  "description": "Minimalist autonomous agent framework using Claude Code hooks - enables continuous iteration and multi-agent workflows",
+  "author": {
+    "name": "hanibalsk",
+    "url": "https://github.com/hanibalsk"
+  },
+  "repository": "https://github.com/hanibalsk/claude-auto-agents",
+  "license": "MIT",
+  "keywords": ["automation", "agents", "loop", "orchestrator", "workflow", "autonomous"]
+}
