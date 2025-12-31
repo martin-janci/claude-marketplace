@@ -25,6 +25,7 @@ EOF
 # Read current loop state
 read_loop_state() {
     init_loop_state
+    # shellcheck source=/dev/null
     source "$LOOP_STATE_FILE"
 }
 
