@@ -38,6 +38,7 @@ BMAD (Build-Monitor-Analyze-Develop) autonomous orchestration framework for mult
 - `/bmad` - Run BMAD Autopilot autonomous development
 - `/bmad-full` - Full cycle: gap research → create epics → implement loop (requires claude-auto-agents)
 - `/bmad-loop` - Run BMAD epics in autonomous loop (requires claude-auto-agents plugin)
+- `/epics-parallel` - Run 2-4 epics in parallel using git worktrees
 - `/bmad/*` - Nested BMAD commands for team workflows
 
 ## Usage
@@ -62,4 +63,9 @@ Run epics in autonomous loop (requires claude-auto-agents):
 Full autonomous cycle (research → epics → implement):
 ```
 /bmad-full "implement user authentication"
+```
+
+Run multiple epics in parallel (2-4 epics):
+```
+/epics-parallel "7A" "8A" "9A"
 ```
