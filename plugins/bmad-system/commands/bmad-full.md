@@ -190,3 +190,145 @@ FILES: comma-separated list of created/modified docs
 NEXT: Next phase or action
 BLOCKER: Reason if blocked (e.g., "Gap analysis found 3 unresolved issues")
 ```
+
+## Autonomous Execution Instructions
+
+You are the **bmad-orchestrator** running the full BMAD cycle. Follow these phases strictly:
+
+### Phase 1: Analysis & Gap Research
+
+**Step 1.1: Document Discovery**
+```bash
+# Find existing BMAD documents
+ls -la _bmad-output/ 2>/dev/null || mkdir -p _bmad-output/{research,planning,epics,stories,readiness}
+ls -la docs/*.md 2>/dev/null || true
+```
+
+Check for:
+- `_bmad-output/planning/prd.md` - Product Requirements
+- `_bmad-output/planning/architecture.md` - Architecture
+- `_bmad-output/planning/ux-design.md` - UX (if UI)
+
+**Step 1.2: Gap Analysis**
+If documents exist, analyze for gaps:
+- Missing requirements sections
+- Unclear acceptance criteria
+- Undefined edge cases
+- Missing non-functional requirements
+
+Create `_bmad-output/research/gap-analysis.md` with findings.
+
+**Step 1.3: Research & Fill Gaps**
+For each gap:
+1. Research best practices
+2. Document findings
+3. Update PRD with new requirements
+
+**Step 1.4: Phase 1 Complete Check**
+Emit status:
+```
+STATUS: COMPLETE
+SUMMARY: Phase 1 complete - analyzed docs, found N gaps, resolved M
+FILES: _bmad-output/research/gap-analysis.md
+NEXT: Phase 2 - Epic Creation
+```
+
+### Phase 2: Epic Creation Loop
+
+**Step 2.1: Validate Prerequisites**
+Ensure PRD and Architecture exist and are complete.
+
+**Step 2.2: Create Epics**
+Using BMAD workflow `create-epics-and-stories`:
+1. Read PRD requirements
+2. Group into logical epics
+3. Write epic files to `_bmad-output/epics/`
+
+**Step 2.3: Create Stories**
+For each epic:
+1. Break into user stories
+2. Write acceptance criteria
+3. Save to `_bmad-output/stories/epic-{id}/`
+
+**Step 2.4: Readiness Check**
+Run `check-implementation-readiness` workflow:
+- Verify all requirements covered
+- Check story quality
+- Validate dependencies
+
+If NOT ready:
+```
+STATUS: BLOCKED
+SUMMARY: Implementation readiness check failed
+BLOCKER: [List of issues from readiness report]
+NEXT: Fix gaps and re-run Phase 2
+```
+
+If ready:
+```
+STATUS: COMPLETE
+SUMMARY: Phase 2 complete - created N epics with M stories
+FILES: _bmad-output/epics/, _bmad-output/stories/
+NEXT: Phase 3 - Implementation Loop
+```
+
+### Phase 3: Implementation Loop
+
+**Step 3.1: Queue All Epics**
+Add each epic to `work/queue.md`:
+```markdown
+## Pending
+- [ ] **[EPIC-1A]** Implement epic 1A: {title}
+  - Priority: high
+  - Agent: bmad-orchestrator
+- [ ] **[EPIC-2A]** Implement epic 2A: {title}
+  - Priority: high
+  - Agent: bmad-orchestrator
+```
+
+**Step 3.2: Start Implementation Loop**
+The loop will process each epic:
+1. Create feature branch
+2. Implement with TDD
+3. Code review
+4. Create PR
+5. Fix CI/review issues
+6. Merge when approved
+
+**Step 3.3: Per-Epic Completion**
+After each epic:
+```
+STATUS: COMPLETE
+SUMMARY: Implemented epic {id}: {title}
+FILES: [changed files]
+NEXT: Process next epic {next_id} or "All epics complete"
+```
+
+### Phase Tracking
+
+Track current phase in `work/current.md`:
+```markdown
+# Current Work
+
+## Phase: [1-Analysis | 2-Epics | 3-Implementation]
+## Status: [In Progress | Blocked | Complete]
+## Current Task: [description]
+## Iteration: [N]
+```
+
+### Error Recovery
+
+If any phase fails:
+1. Log error to `work/blockers.md`
+2. Emit STATUS: ERROR with details
+3. The loop will pause for manual intervention
+
+### Completion
+
+When all phases complete:
+```
+STATUS: COMPLETE
+SUMMARY: Full BMAD cycle complete - implemented N epics
+FILES: [all changed files]
+NEXT: All work complete. Review PRs and deployed features.
+```

@@ -21,6 +21,7 @@ LOOP_MAX_ITERATIONS=50
 LOOP_PROMPT=""
 
 if [[ -f "$LOOP_STATE_FILE" ]]; then
+    # shellcheck source=/dev/null
     source "$LOOP_STATE_FILE"
 fi
 
@@ -44,6 +45,7 @@ LAST_OUTPUT="${CLAUDE_LAST_OUTPUT:-}"
 STATUS=$(echo "$LAST_OUTPUT" | grep -E "^STATUS:" | head -1 | cut -d: -f2 | tr -d ' ' || echo "")
 SUMMARY=$(echo "$LAST_OUTPUT" | grep -E "^SUMMARY:" | head -1 | cut -d: -f2- | sed 's/^ *//' || echo "")
 FILES=$(echo "$LAST_OUTPUT" | grep -E "^FILES:" | head -1 | cut -d: -f2- | sed 's/^ *//' || echo "")
+export FILES
 NEXT=$(echo "$LAST_OUTPUT" | grep -E "^NEXT:" | head -1 | cut -d: -f2- | sed 's/^ *//' || echo "")
 BLOCKER=$(echo "$LAST_OUTPUT" | grep -E "^BLOCKER:" | head -1 | cut -d: -f2- | sed 's/^ *//' || echo "")
 
@@ -121,18 +123,3 @@ case "$STATUS" in
         exit 2
         ;;
 esac
-
-# Helper function to update loop state
-update_loop_state() {
-    local active="$1"
-    local iteration="$2"
-    local prompt="$3"
-
-    cat > "$LOOP_STATE_FILE" << EOF
-LOOP_ACTIVE=$active
-LOOP_ITERATION=$iteration
-LOOP_MAX_ITERATIONS=$LOOP_MAX_ITERATIONS
-LOOP_PROMPT="$prompt"
-LOOP_STARTED="${LOOP_STARTED:-$(date -u +"%Y-%m-%dT%H:%M:%SZ")}"
-EOF
-}
