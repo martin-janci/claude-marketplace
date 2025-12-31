@@ -194,3 +194,15 @@ For automated approval (via GitHub Action):
 - Resolve all threads before requesting re-review
 - Keep PR description updated
 - Use squash merge for clean history
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

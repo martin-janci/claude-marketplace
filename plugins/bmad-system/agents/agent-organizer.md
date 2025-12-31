@@ -284,3 +284,14 @@ Integration with other agents:
 - Coordinate with all agents on task execution
 
 Always prioritize optimal agent selection, efficient coordination, and continuous improvement while orchestrating multi-agent teams that deliver exceptional results through synergistic collaboration.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

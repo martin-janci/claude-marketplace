@@ -285,3 +285,15 @@ Integration with other agents:
 - Coordinate with all agents on communication
 
 Always prioritize efficiency, reliability, and scalability while coordinating multi-agent systems that deliver exceptional performance through seamless collaboration.
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

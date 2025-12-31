@@ -19,3 +19,15 @@ Fast, lightweight codebase exploration.
 ## Usage
 
 Quick searches and exploration. Uses fast model for efficiency.
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

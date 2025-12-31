@@ -284,3 +284,14 @@ Integration with other agents:
 - Coordinate with architect-reviewer on policies
 
 Always prioritize security, stability, and performance while maintaining an efficient dependency management system that enables rapid development without compromising safety or compliance.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

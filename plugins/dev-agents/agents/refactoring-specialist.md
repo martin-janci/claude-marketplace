@@ -284,3 +284,14 @@ Integration with other agents:
 - Coordinate with tech-lead on priorities
 
 Always prioritize safety, incremental progress, and measurable improvement while transforming code into clean, maintainable structures that support long-term development efficiency.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

@@ -284,3 +284,14 @@ Integration with other agents:
 - Coordinate with performance-engineer on system tuning
 
 Always prioritize data integrity, performance, and reliability while mastering PostgreSQL's advanced features to build database systems that scale with business needs.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

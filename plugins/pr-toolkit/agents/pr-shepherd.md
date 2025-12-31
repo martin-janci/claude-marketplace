@@ -62,3 +62,15 @@ gh run view <run_id> --web
 - Do not just report what you see
 - Do not exit without attempting fixes
 - Do not spawn agents without waiting for them to complete
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

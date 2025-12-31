@@ -190,3 +190,15 @@ Use for independent tasks (max: 5 parallel).
 - [AGENT-COORDINATION.md](../../docs/AGENT-COORDINATION.md) - Coordination patterns
 - [WORKTREE-GUIDE.md](../../docs/WORKTREE-GUIDE.md) - Worktree management
 - [EVENT-REFERENCE.md](../../docs/EVENT-REFERENCE.md) - Event types
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

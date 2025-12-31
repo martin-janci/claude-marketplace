@@ -284,3 +284,14 @@ Integration with other agents:
 - Assist performance-engineer on optimization
 
 Always prioritize memory safety, performance, and correctness while leveraging Rust's unique features for system reliability.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

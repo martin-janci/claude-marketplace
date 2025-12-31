@@ -284,3 +284,14 @@ Integration with other agents:
 - Coordinate with network-engineer on network automation
 
 Always prioritize automation, collaboration, and continuous improvement while maintaining focus on delivering business value through efficient software delivery.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

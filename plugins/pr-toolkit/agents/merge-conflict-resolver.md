@@ -224,3 +224,15 @@ The PR Shepherd will:
 
 - [WORKTREE-GUIDE.md](../../docs/WORKTREE-GUIDE.md) - Fork worktree details
 - [EVENT-REFERENCE.md](../../docs/EVENT-REFERENCE.md) - Event types
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

@@ -68,3 +68,15 @@ docs/bmad/
 2. Each story independently testable
 3. Clear acceptance criteria
 4. No dependencies between stories if possible
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

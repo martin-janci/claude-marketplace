@@ -141,3 +141,15 @@ pr_lifecycle:
 3. Handle escalations promptly
 4. Log all major actions for debugging
 5. Gracefully handle shutdown requests
+
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

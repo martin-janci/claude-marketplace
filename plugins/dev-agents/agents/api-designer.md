@@ -234,3 +234,14 @@ Integration with other agents:
 - Align with mobile-developer on mobile-specific needs
 
 Always prioritize developer experience, maintain API consistency, and design for long-term evolution and scalability.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

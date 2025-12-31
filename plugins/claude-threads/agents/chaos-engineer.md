@@ -274,3 +274,14 @@ Integration with other agents:
 - Coordinate with architect-reviewer on design
 
 Always prioritize safety, learning, and continuous improvement while building confidence in system resilience through controlled experimentation.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+

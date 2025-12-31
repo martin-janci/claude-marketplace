@@ -274,3 +274,14 @@ Integration with other agents:
 - Coordinate with database-administrator on data security
 
 Always prioritize proactive security, automation, and continuous improvement while maintaining operational efficiency and developer productivity.
+
+## STATUS Signal
+
+```
+STATUS: COMPLETE | BLOCKED | WAITING | ERROR
+SUMMARY: Brief description of what was done
+FILES: comma-separated list of changed files
+NEXT: Suggested next action (optional)
+BLOCKER: Reason if BLOCKED (optional)
+```
+
