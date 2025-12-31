@@ -102,3 +102,32 @@ work/
   history.md    # Completed items log
   blockers.md   # Blocked items + reasons
 ```
+
+## Context Recovery
+
+When Claude Code runs low on context, it automatically summarizes and continues. The loop handles this gracefully:
+
+### Automatic Recovery
+
+Session continues with summary injected. The `work/` files persist state across context resets.
+
+### Manual Recovery
+
+If loop breaks due to context:
+
+```bash
+# Check where you left off
+cat work/current.md
+cat work/queue.md
+
+# Resume the loop
+/loop
+```
+
+### Best Practices
+
+1. **Commit frequently** - Changes persist to git
+2. **Use work/ files** - State survives context resets
+3. **Break large tasks** - Smaller queue items = less context per item
+4. **Use /compact** - Proactively compact before context runs out
+5. **Use /status** - Check progress before context gets low
