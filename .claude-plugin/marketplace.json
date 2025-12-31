@@ -32,26 +32,15 @@
       "keywords": ["bmad", "orchestration", "epics", "stories", "planning", "autonomous"]
     },
     {
-      "name": "claude-threads",
-      "version": "1.0.0",
-      "description": "Multi-agent threading and git worktree management for parallel agent execution",
-      "source": "./plugins/claude-threads",
-      "author": {
-        "name": "hanibalsk",
-        "url": "https://github.com/hanibalsk"
-      },
-      "keywords": ["threads", "worktree", "parallel", "git", "isolation", "multi-agent"]
-    },
-    {
       "name": "dev-agents",
       "version": "1.0.0",
-      "description": "Core development agents and skills - backend, debugging, refactoring, database, API design, DevOps, security",
+      "description": "Core development agents and skills - backend, debugging, refactoring, database, API design, DevOps, security, chaos engineering, git worktrees",
       "source": "./plugins/dev-agents",
       "author": {
         "name": "hanibalsk",
         "url": "https://github.com/hanibalsk"
       },
-      "keywords": ["development", "backend", "debugging", "refactoring", "database", "devops", "security"]
+      "keywords": ["development", "backend", "debugging", "refactoring", "database", "devops", "security", "chaos", "worktrees"]
     },
     {
       "name": "pr-toolkit",
@@ -67,13 +56,13 @@
     {
       "name": "story-agents",
       "version": "1.0.0",
-      "description": "Feature and story development agents - story implementation, issue fixing, exploration, test writing",
+      "description": "Feature and story development agents - story implementation, issue fixing, exploration, test writing, parallel execution",
       "source": "./plugins/story-agents",
       "author": {
         "name": "hanibalsk",
         "url": "https://github.com/hanibalsk"
       },
-      "keywords": ["stories", "features", "issues", "testing", "exploration", "development"]
+      "keywords": ["stories", "features", "issues", "testing", "exploration", "development", "parallel"]
     }
   ]
 }

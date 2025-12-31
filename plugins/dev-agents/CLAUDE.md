@@ -16,6 +16,7 @@ Core development agents and skills for backend, database, security, debugging, a
 | `dependency-manager` | Dependency management |
 | `devops-engineer` | DevOps and infrastructure |
 | `security-engineer` | Security and compliance |
+| `chaos-engineer` | Chaos engineering and resilience testing |
 
 ## Skills
 
@@ -24,6 +25,7 @@ Core development agents and skills for backend, database, security, debugging, a
 - **verification-before-completion/** - Verification patterns
 - **testing-anti-patterns/** - Testing pitfalls to avoid
 - **writing-skills/** - Skill authoring guide
+- **using-git-worktrees/** - Git worktree management for parallel work
 
 ## Commands
 
