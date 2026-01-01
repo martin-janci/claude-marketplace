@@ -143,16 +143,49 @@ atomic_append() {
 
 # === Logging ===
 
+# Log levels (exported for use by other scripts)
+export LOG_LEVEL_DEBUG=0
+export LOG_LEVEL_INFO=1
+export LOG_LEVEL_WARN=2
+export LOG_LEVEL_ERROR=3
+export CURRENT_LOG_LEVEL=${CLAUDE_LOG_LEVEL:-1}  # Default: INFO
+
+# Component name for structured logging (can be overridden)
+COMPONENT="${COMPONENT:-common}"
+
+# Structured log message
+# Writes JSON to .agent-history.jsonl and optionally to .debug.log
+log_message() {
+    local level="$1"
+    local message="$2"
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    local work_dir
+    work_dir="$(get_work_dir)"
+    mkdir -p "$work_dir"
+
+    # Escape message for JSON (basic escaping)
+    local escaped_msg
+    escaped_msg=$(printf '%s' "$message" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' ')
+
+    # JSON-structured log entry
+    local log_entry
+    log_entry="{\"ts\":\"$timestamp\",\"pid\":$$,\"level\":\"$level\",\"component\":\"$COMPONENT\",\"msg\":\"$escaped_msg\"}"
+
+    # Always write to structured log
+    echo "$log_entry" >> "$work_dir/.agent-history.jsonl"
+
+    # Conditionally write to debug log
+    if [[ -n "${CLAUDE_DEBUG:-}" ]] || [[ -f "$work_dir/.debug.log" ]]; then
+        printf "[%s] [%s] [%s] %s\n" "$timestamp" "$level" "$COMPONENT" "$message" >> "$work_dir/.debug.log"
+    fi
+}
+
 # Debug log (only if CLAUDE_DEBUG is set)
 log_debug() {
     local message="$1"
-    local log_file
-    log_file="$(get_work_dir)/.debug.log"
-
-    # Always log if debug file exists or CLAUDE_DEBUG is set
-    if [[ -n "${CLAUDE_DEBUG:-}" ]] || [[ -f "$log_file" ]]; then
-        echo "[$(date -u +"%Y-%m-%dT%H:%M:%SZ")] [$$] $message" >> "$log_file"
-    fi
+    log_message "DEBUG" "$message"
 }
 
 # Info log (always logged to .loop.log)
@@ -163,13 +196,64 @@ log_info() {
 
     mkdir -p "$(dirname "$log_file")"
     echo "[$(date -u +"%Y-%m-%dT%H:%M:%SZ")] $message" >> "$log_file"
+
+    # Also log to structured log
+    log_message "INFO" "$message"
+}
+
+# Warning log
+log_warn() {
+    local message="$1"
+    log_info "WARN: $message"
+    log_message "WARN" "$message"
 }
 
 # Error log
 log_error() {
     local message="$1"
     log_info "ERROR: $message"
-    log_debug "ERROR: $message"
+    log_message "ERROR" "$message"
+}
+
+# === Elapsed Time Tracking ===
+
+# Timer start time (milliseconds if available, seconds as fallback)
+TIMER_START=""
+
+# Get current time in milliseconds (portable - macOS doesn't support %N)
+get_time_ms() {
+    local test_output
+    test_output=$(date +%s%3N 2>/dev/null)
+    # If the output contains 'N', the format wasn't supported
+    if [[ "$test_output" == *"N"* ]] || [[ -z "$test_output" ]]; then
+        echo "$(($(date +%s) * 1000))"
+    else
+        echo "$test_output"
+    fi
+}
+
+# Start a timer for operation tracking
+start_timer() {
+    TIMER_START=$(get_time_ms)
+}
+
+# Get elapsed time in milliseconds since start_timer
+elapsed_ms() {
+    local now
+    now=$(get_time_ms)
+    echo $((now - ${TIMER_START:-now}))
+}
+
+# Log operation with elapsed time
+# Usage: log_operation "operation_name" "status" ["details"]
+log_operation() {
+    local operation="$1"
+    local status="$2"
+    local details="${3:-}"
+    local elapsed
+    elapsed=$(elapsed_ms)
+
+    log_info "$operation: $status (${elapsed}ms)${details:+ - $details}"
 }
 
 # === Utilities ===
@@ -204,5 +288,6 @@ is_file_stale() {
 export -f get_project_dir get_work_dir ensure_work_dir
 export -f acquire_lock release_lock
 export -f atomic_write atomic_append
-export -f log_debug log_info log_error
+export -f log_message log_debug log_info log_warn log_error
+export -f get_time_ms start_timer elapsed_ms log_operation
 export -f get_timestamp is_file_stale

@@ -17,6 +17,9 @@ LOOP_STATE_FILE="$(get_work_dir 2>/dev/null || echo "$SCRIPT_DIR")/.loop-state"
 DEFAULT_MAX_ITERATIONS=50
 DEFAULT_ERROR_THRESHOLD=3
 
+# Additional defaults for hang detection
+DEFAULT_WAITING_THRESHOLD=10
+
 # Initialize loop state file if missing
 init_loop_state() {
     if [[ ! -f "$LOOP_STATE_FILE" ]]; then
@@ -31,6 +34,10 @@ ERROR_THRESHOLD=$DEFAULT_ERROR_THRESHOLD
 CURRENT_ITEM=""
 LAST_STATUS=""
 LAST_UPDATE=""
+WAITING_COUNT=0
+WAITING_THRESHOLD=$DEFAULT_WAITING_THRESHOLD
+ITERATION_START_MS=0
+TOTAL_ELAPSED_MS=0
 EOF
     fi
 }
@@ -43,6 +50,7 @@ read_loop_state() {
 }
 
 # Update loop state (full update)
+# Note: This preserves WAITING_COUNT, WAITING_THRESHOLD, ITERATION_START_MS, TOTAL_ELAPSED_MS
 update_loop_state() {
     local active="${1:-false}"
     local iteration="${2:-0}"
@@ -53,6 +61,12 @@ update_loop_state() {
     local error_threshold="${7:-$DEFAULT_ERROR_THRESHOLD}"
     local current_item="${8:-}"
     local last_status="${9:-}"
+
+    # Preserve timing/waiting fields if they exist
+    local waiting_count="${WAITING_COUNT:-0}"
+    local waiting_threshold="${WAITING_THRESHOLD:-$DEFAULT_WAITING_THRESHOLD}"
+    local iteration_start_ms="${ITERATION_START_MS:-0}"
+    local total_elapsed_ms="${TOTAL_ELAPSED_MS:-0}"
 
     cat > "$LOOP_STATE_FILE" << EOF
 LOOP_ACTIVE=$active
@@ -65,6 +79,10 @@ ERROR_THRESHOLD=$error_threshold
 CURRENT_ITEM="$current_item"
 LAST_STATUS="$last_status"
 LAST_UPDATE="$(get_timestamp 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")"
+WAITING_COUNT=$waiting_count
+WAITING_THRESHOLD=$waiting_threshold
+ITERATION_START_MS=$iteration_start_ms
+TOTAL_ELAPSED_MS=$total_elapsed_ms
 EOF
 }
 
@@ -75,8 +93,9 @@ update_state_field() {
 
     read_loop_state
 
-    # Ensure ERROR_THRESHOLD has a default if not set from state file
+    # Ensure defaults if not set from state file
     ERROR_THRESHOLD="${ERROR_THRESHOLD:-$DEFAULT_ERROR_THRESHOLD}"
+    WAITING_THRESHOLD="${WAITING_THRESHOLD:-$DEFAULT_WAITING_THRESHOLD}"
 
     case "$field" in
         LOOP_ACTIVE) LOOP_ACTIVE="$value" ;;
@@ -84,6 +103,10 @@ update_state_field() {
         CONSECUTIVE_ERRORS) CONSECUTIVE_ERRORS="$value" ;;
         CURRENT_ITEM) CURRENT_ITEM="$value" ;;
         LAST_STATUS) LAST_STATUS="$value" ;;
+        WAITING_COUNT) WAITING_COUNT="$value" ;;
+        WAITING_THRESHOLD) WAITING_THRESHOLD="$value" ;;
+        ITERATION_START_MS) ITERATION_START_MS="$value" ;;
+        TOTAL_ELAPSED_MS) TOTAL_ELAPSED_MS="$value" ;;
         *) return 1 ;;
     esac
 
@@ -205,6 +228,122 @@ get_last_status() {
     echo "$LAST_STATUS"
 }
 
+# === WAITING Counter (for hang detection) ===
+
+# Increment WAITING count, return new count
+# Returns 1 (failure) if threshold reached
+increment_waiting() {
+    read_loop_state
+    local new_count=$((${WAITING_COUNT:-0} + 1))
+    update_state_field "WAITING_COUNT" "$new_count"
+
+    local threshold="${WAITING_THRESHOLD:-$DEFAULT_WAITING_THRESHOLD}"
+    if [[ $new_count -ge $threshold ]]; then
+        log_warn "WAITING threshold reached ($new_count attempts)" 2>/dev/null || true
+        echo "$new_count"
+        return 1  # Signal to pause
+    fi
+
+    echo "$new_count"
+    return 0
+}
+
+# Reset WAITING count to 0
+reset_waiting() {
+    update_state_field "WAITING_COUNT" "0"
+}
+
+# Get current WAITING count
+get_waiting_count() {
+    read_loop_state
+    echo "${WAITING_COUNT:-0}"
+}
+
+# Check if WAITING threshold exceeded
+waiting_threshold_exceeded() {
+    read_loop_state
+    local threshold="${WAITING_THRESHOLD:-$DEFAULT_WAITING_THRESHOLD}"
+    [[ ${WAITING_COUNT:-0} -ge $threshold ]]
+}
+
+# === Iteration History Logging ===
+
+# Get current time in milliseconds (portable)
+get_time_ms() {
+    # macOS date doesn't support %N, so we check for it properly
+    local test_output
+    test_output=$(date +%s%3N 2>/dev/null)
+    # If the output contains 'N', the format wasn't supported
+    if [[ "$test_output" == *"N"* ]] || [[ -z "$test_output" ]]; then
+        echo "$(($(date +%s) * 1000))"
+    else
+        echo "$test_output"
+    fi
+}
+
+# Log iteration start to history file
+log_iteration_start() {
+    read_loop_state
+    local work_dir
+    work_dir="$(get_work_dir 2>/dev/null || echo ".")"
+
+    # Record start time
+    ITERATION_START_MS=$(get_time_ms)
+    update_state_field "ITERATION_START_MS" "$ITERATION_START_MS"
+
+    # Escape summary for JSON
+    local escaped_item
+    escaped_item=$(printf '%s' "${CURRENT_ITEM:-}" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ')
+
+    # Write start entry to iteration history
+    local history_entry
+    history_entry="{\"iteration\":${LOOP_ITERATION:-0},\"item\":\"$escaped_item\",\"started\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"status\":\"started\"}"
+
+    echo "$history_entry" >> "$work_dir/.iteration-history.jsonl"
+    log_debug "Iteration $LOOP_ITERATION started: $CURRENT_ITEM" 2>/dev/null || true
+}
+
+# Log iteration end to history file
+log_iteration_end() {
+    local status="$1"
+    local summary="${2:-}"
+    read_loop_state
+    local work_dir
+    work_dir="$(get_work_dir 2>/dev/null || echo ".")"
+
+    local now_ms
+    now_ms=$(get_time_ms)
+    local elapsed_ms=$((now_ms - ${ITERATION_START_MS:-now_ms}))
+
+    # Update total elapsed time
+    local new_total=$((${TOTAL_ELAPSED_MS:-0} + elapsed_ms))
+    update_state_field "TOTAL_ELAPSED_MS" "$new_total"
+
+    # Escape for JSON
+    local escaped_item escaped_summary
+    escaped_item=$(printf '%s' "${CURRENT_ITEM:-}" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ')
+    escaped_summary=$(printf '%s' "$summary" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ')
+
+    # Write end entry to iteration history
+    local history_entry
+    history_entry="{\"iteration\":${LOOP_ITERATION:-0},\"item\":\"$escaped_item\",\"ended\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"status\":\"$status\",\"elapsed_ms\":$elapsed_ms,\"summary\":\"$escaped_summary\"}"
+
+    echo "$history_entry" >> "$work_dir/.iteration-history.jsonl"
+
+    # Warn if iteration took too long (>5 minutes = 300000ms)
+    if [[ $elapsed_ms -gt 300000 ]]; then
+        log_warn "Iteration $LOOP_ITERATION took ${elapsed_ms}ms (>5 min)" 2>/dev/null || true
+    fi
+
+    log_debug "Iteration $LOOP_ITERATION ended: $status (${elapsed_ms}ms)" 2>/dev/null || true
+}
+
+# Get total elapsed time across all iterations
+get_total_elapsed() {
+    read_loop_state
+    echo "${TOTAL_ELAPSED_MS:-0}"
+}
+
 # === Loop Status Summary ===
 
 get_loop_status() {
@@ -213,7 +352,8 @@ get_loop_status() {
     echo "Loop Status:"
     echo "  Active: $LOOP_ACTIVE"
     echo "  Iteration: $LOOP_ITERATION / $LOOP_MAX_ITERATIONS"
-    echo "  Consecutive Errors: $CONSECUTIVE_ERRORS / $ERROR_THRESHOLD"
+    echo "  Consecutive Errors: $CONSECUTIVE_ERRORS / ${ERROR_THRESHOLD:-$DEFAULT_ERROR_THRESHOLD}"
+    echo "  WAITING Count: ${WAITING_COUNT:-0} / ${WAITING_THRESHOLD:-$DEFAULT_WAITING_THRESHOLD}"
     if [[ -n "$CURRENT_ITEM" ]]; then
         echo "  Current Item: $CURRENT_ITEM"
     fi
@@ -228,6 +368,9 @@ get_loop_status() {
     fi
     if [[ -n "$LAST_UPDATE" ]]; then
         echo "  Last Update: $LAST_UPDATE"
+    fi
+    if [[ ${TOTAL_ELAPSED_MS:-0} -gt 0 ]]; then
+        echo "  Total Runtime: ${TOTAL_ELAPSED_MS}ms"
     fi
 }
 
@@ -290,6 +433,30 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         was-interrupted)
             was_interrupted && echo "true" || echo "false"
             ;;
+        waiting)
+            get_waiting_count
+            ;;
+        inc-waiting)
+            increment_waiting
+            ;;
+        reset-waiting)
+            reset_waiting
+            echo "WAITING count reset to 0"
+            ;;
+        waiting-exceeded)
+            waiting_threshold_exceeded && echo "true" || echo "false"
+            ;;
+        log-start)
+            log_iteration_start
+            echo "Iteration start logged"
+            ;;
+        log-end)
+            log_iteration_end "${2:-UNKNOWN}" "${3:-}"
+            echo "Iteration end logged: $2"
+            ;;
+        total-elapsed)
+            get_total_elapsed
+            ;;
         *)
             echo "Usage: $0 {start|stop|status|active|iteration|increment|errors|...}"
             echo ""
@@ -306,6 +473,17 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             echo "  inc-errors            - Increment error count"
             echo "  reset-errors          - Reset errors to 0"
             echo "  should-pause          - Check if should pause"
+            echo ""
+            echo "WAITING Tracking:"
+            echo "  waiting               - Get consecutive WAITING count"
+            echo "  inc-waiting           - Increment WAITING count"
+            echo "  reset-waiting         - Reset WAITING count to 0"
+            echo "  waiting-exceeded      - Check if threshold exceeded"
+            echo ""
+            echo "Iteration History:"
+            echo "  log-start             - Log iteration start"
+            echo "  log-end <status> [summary] - Log iteration end"
+            echo "  total-elapsed         - Get total elapsed ms"
             echo ""
             echo "Item Tracking:"
             echo "  current-item          - Get current item ID"

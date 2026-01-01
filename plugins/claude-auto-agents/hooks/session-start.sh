@@ -7,17 +7,35 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Source library functions
+# Set component name for structured logging
+COMPONENT="session-start"
+
+# Source library functions with error handling
 # shellcheck source=lib/common.sh
-source "$SCRIPT_DIR/lib/common.sh" 2>/dev/null || true
+if ! source "$SCRIPT_DIR/lib/common.sh" 2>/dev/null; then
+    # Minimal fallback if common.sh fails to load
+    log_info() { :; }
+    log_debug() { :; }
+    log_warn() { :; }
+    log_error() { :; }
+    get_project_dir() { echo "${CLAUDE_PROJECT_DIR:-$(pwd)}"; }
+fi
 # shellcheck source=lib/loop-control.sh
-source "$SCRIPT_DIR/lib/loop-control.sh" 2>/dev/null || true
+if ! source "$SCRIPT_DIR/lib/loop-control.sh" 2>/dev/null; then
+    log_warn "Failed to source loop-control.sh"
+fi
 # shellcheck source=lib/queue-manager.sh
-source "$SCRIPT_DIR/lib/queue-manager.sh" 2>/dev/null || true
+if ! source "$SCRIPT_DIR/lib/queue-manager.sh" 2>/dev/null; then
+    log_warn "Failed to source queue-manager.sh"
+fi
+
+log_debug "Session start hook initialized"
 
 # Get project directory
 PROJECT_DIR="$(get_project_dir 2>/dev/null || echo "${CLAUDE_PROJECT_DIR:-$(pwd)}")"
 WORK_DIR="$PROJECT_DIR/work"
+
+log_debug "WORK_DIR: $WORK_DIR"
 
 # Initialize work directory if it doesn't exist
 init_work_directory() {
@@ -149,8 +167,13 @@ if [[ "${LOOP_ACTIVE:-false}" == "true" ]]; then
     fi
     echo ""
     echo "Consecutive errors: ${CONSECUTIVE_ERRORS:-0} / ${ERROR_THRESHOLD:-3}"
+    echo "WAITING count: ${WAITING_COUNT:-0} / ${WAITING_THRESHOLD:-10}"
     echo ""
     echo "Continue working on the task. Emit STATUS when done."
+
+    # Log iteration start for timing
+    log_iteration_start 2>/dev/null || true
+    log_info "Loop iteration ${LOOP_ITERATION:-0} starting"
 else
     echo ""
     echo "Loop is **inactive**. Use \`/loop \"task\"\` to start."

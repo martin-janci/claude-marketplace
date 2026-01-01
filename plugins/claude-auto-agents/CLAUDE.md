@@ -75,6 +75,8 @@ Work items are tracked in `work/queue.md`. The format is:
 - `/status` - Show current progress and queue
 - `/queue add|remove|list [args]` - Manage work queue
 - `/spawn <agent> [task]` - Launch specific agent type
+- `/debug [component]` - Debug dashboard (loop, queue, status, history, locks, errors, all)
+- `/history [count]` - Show iteration history with timing
 
 ## Loop Behavior
 
@@ -91,17 +93,45 @@ When `/loop` is active:
 
 - **Max iterations**: 50 (configurable in `hooks/lib/loop-control.sh`)
 - **Error threshold**: 3 consecutive errors (configurable in `hooks/lib/loop-control.sh`)
-- **Auto-pause on**: consecutive errors threshold, BLOCKED status, queue empty
+- **WAITING threshold**: 10 consecutive WAITING statuses (prevents infinite loops)
+- **Auto-pause on**: consecutive errors threshold, WAITING threshold, BLOCKED status, queue empty
 
 ## Project Structure
 
 ```
 work/
-  queue.md      # Work items
-  current.md    # Active work context
-  history.md    # Completed items log
-  blockers.md   # Blocked items + reasons
+  queue.md                   # Work items
+  current.md                 # Active work context
+  history.md                 # Completed items log
+  blockers.md                # Blocked items + reasons
+  .loop-state                # Loop state (iteration, errors, etc.)
+  .status                    # Current STATUS signal file
+  .debug.log                 # Debug log (if CLAUDE_DEBUG=1)
+  .loop.log                  # Loop activity log
+  .agent-history.jsonl       # Structured JSON log of all activity
+  .iteration-history.jsonl   # Iteration timing and status history
 ```
+
+## Debugging
+
+Enable debug logging:
+```bash
+export CLAUDE_DEBUG=1
+```
+
+View logs:
+```bash
+# Human-readable debug log
+cat work/.debug.log
+
+# Structured JSON activity log
+cat work/.agent-history.jsonl
+
+# Iteration timing history
+cat work/.iteration-history.jsonl
+```
+
+Use `/debug` to see a live dashboard of loop state, queue, locks, and recent errors.
 
 ## Context Recovery
 
