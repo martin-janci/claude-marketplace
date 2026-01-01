@@ -131,3 +131,7 @@ cat work/queue.md
 3. **Break large tasks** - Smaller queue items = less context per item
 4. **Use /compact** - Proactively compact before context runs out
 5. **Use /status** - Check progress before context gets low
+
+## Documentation
+
+- [Multi-Agent Patterns](docs/MULTI-AGENT-PATTERNS.md) - Architectural patterns and best practices for multi-agent workflows
