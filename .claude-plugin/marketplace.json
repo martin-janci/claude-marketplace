@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "claude-auto-agents",
-      "version": "1.0.0",
+      "version": "1.3.0",
       "description": "Minimalist autonomous agent framework using Claude Code hooks - enables continuous iteration and multi-agent workflows",
       "source": "./plugins/claude-auto-agents",
       "author": {
