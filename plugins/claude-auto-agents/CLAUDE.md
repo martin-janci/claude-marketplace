@@ -94,7 +94,8 @@ When `/loop` is active:
 - **Max iterations**: 50 (configurable in `hooks/lib/loop-control.sh`)
 - **Error threshold**: 3 consecutive errors (configurable in `hooks/lib/loop-control.sh`)
 - **WAITING threshold**: 10 consecutive WAITING statuses (prevents infinite loops)
-- **Auto-pause on**: consecutive errors threshold, WAITING threshold, BLOCKED status, queue empty
+- **NO_STATUS threshold**: 5 consecutive iterations without STATUS signal (prevents runaway loops when agent doesn't emit status)
+- **Auto-pause on**: consecutive errors threshold, WAITING threshold, NO_STATUS threshold, BLOCKED status, queue empty
 
 ## Project Structure
 
