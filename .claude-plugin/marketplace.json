@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "claude-auto-agents",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "description": "Minimalist autonomous agent framework using Claude Code hooks - enables continuous iteration and multi-agent workflows",
       "source": "./plugins/claude-auto-agents",
       "author": {
@@ -33,7 +33,7 @@
     },
     {
       "name": "dev-agents",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "description": "Core development agents and skills - backend, debugging, refactoring, database, API design, DevOps, security, chaos engineering, git worktrees",
       "source": "./plugins/dev-agents",
       "author": {
@@ -44,7 +44,7 @@
     },
     {
       "name": "pr-toolkit",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "description": "PR lifecycle management and code review workflows - shepherd PRs from creation to merge",
       "source": "./plugins/pr-toolkit",
       "author": {
@@ -55,7 +55,7 @@
     },
     {
       "name": "story-agents",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "description": "Feature and story development agents - story implementation, issue fixing, exploration, test writing, parallel execution",
       "source": "./plugins/story-agents",
       "author": {
