@@ -2,7 +2,7 @@
 name: pr-shepherd
 description: PR lifecycle management (create, monitor, fix, merge)
 tools: Bash, Read, Write, Edit, Glob, Grep, Task
-model: sonnet
+model: sonnet[1m]
 max_turns: 60
 ---
 

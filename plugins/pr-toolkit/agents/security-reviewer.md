@@ -2,7 +2,7 @@
 name: security-reviewer
 description: Security audit specialist. Use for security-focused code review, vulnerability detection, and security best practices analysis. Read-only.
 tools: Read, Glob, Grep
-model: sonnet
+model: opus
 ---
 
 # Security Reviewer Agent

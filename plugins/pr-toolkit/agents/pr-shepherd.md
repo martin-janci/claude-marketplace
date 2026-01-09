@@ -2,6 +2,7 @@
 name: pr-shepherd
 description: Watch PRs and auto-fix CI failures or review comments. Use when monitoring a PR lifecycle.
 tools: Bash, Read, Write, Edit, Glob, Grep, Task
+model: sonnet[1m]
 ---
 
 # PR Shepherd Agent

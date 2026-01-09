@@ -2,6 +2,7 @@
 name: issue-fixer
 description: Fix CI failures, test failures, or review issues. Use when something is broken.
 tools: Bash, Read, Write, Edit, Glob, Grep
+model: sonnet
 ---
 
 # Issue Fixer Agent

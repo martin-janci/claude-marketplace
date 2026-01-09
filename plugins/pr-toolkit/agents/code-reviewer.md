@@ -2,6 +2,12 @@
 name: code-reviewer
 description: Review code for quality, security, and best practices. Read-only analysis.
 tools: Bash, Read, Glob, Grep
+model: sonnet
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-review-format.sh"
 ---
 
 # Code Reviewer Agent

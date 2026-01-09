@@ -2,6 +2,12 @@
 name: story-developer
 description: Implement features using TDD. Use for developing user stories and features.
 tools: Bash, Read, Write, Edit, Glob, Grep
+model: sonnet
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "bash ${CLAUDE_PLUGIN_ROOT}/scripts/verify-tdd-complete.sh"
 ---
 
 # Story Developer Agent

@@ -2,7 +2,7 @@
 name: pr-lifecycle-shepherd
 description: Monitors a specific PR through its complete lifecycle, spawning sub-agents for conflict resolution and comment handling. Ensures all criteria are met before merge.
 tools: Bash, Read, Write, Edit, Glob, Grep, Task
-model: sonnet
+model: sonnet[1m]
 ---
 
 # PR Lifecycle Shepherd Agent
