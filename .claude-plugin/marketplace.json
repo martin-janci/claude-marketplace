@@ -74,6 +74,28 @@
         "url": "https://github.com/hanibalsk"
       },
       "keywords": ["kubernetes", "k8s", "kubectl", "k9s", "devops", "deployment", "debugging", "manifests", "gitops", "helm", "ssh", "tunnel", "bastion"]
+    },
+    {
+      "name": "nuxt-setup",
+      "version": "1.0.0",
+      "description": "Nuxt/Vue/TypeScript project setup - dependency installation, Nuxt preparation, LSP configuration, TypeScript troubleshooting",
+      "source": "./plugins/nuxt-setup",
+      "author": {
+        "name": "hanibalsk",
+        "url": "https://github.com/hanibalsk"
+      },
+      "keywords": ["nuxt", "vue", "typescript", "setup", "lsp", "dependencies", "volar", "frontend"]
+    },
+    {
+      "name": "worktree",
+      "version": "1.0.0",
+      "description": "Git worktree management - create, list, delete, switch worktrees for parallel branch development",
+      "source": "./plugins/worktree",
+      "author": {
+        "name": "hanibalsk",
+        "url": "https://github.com/hanibalsk"
+      },
+      "keywords": ["git", "worktree", "branches", "parallel", "development", "isolation"]
     }
   ]
 }

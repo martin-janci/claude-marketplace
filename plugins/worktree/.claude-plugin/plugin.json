@@ -1,0 +1,12 @@
+{
+  "name": "worktree",
+  "version": "1.0.0",
+  "description": "Git worktree management - create, list, delete, switch worktrees for parallel branch development",
+  "author": {
+    "name": "hanibalsk",
+    "url": "https://github.com/hanibalsk"
+  },
+  "repository": "https://github.com/hanibalsk/claude-marketplace",
+  "license": "MIT",
+  "keywords": ["git", "worktree", "branches", "parallel", "development", "isolation"]
+}

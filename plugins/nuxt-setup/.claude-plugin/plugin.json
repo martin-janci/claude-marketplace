@@ -1,0 +1,12 @@
+{
+  "name": "nuxt-setup",
+  "version": "1.0.0",
+  "description": "Nuxt/Vue/TypeScript project setup - dependency installation, Nuxt preparation, LSP configuration, TypeScript troubleshooting",
+  "author": {
+    "name": "hanibalsk",
+    "url": "https://github.com/hanibalsk"
+  },
+  "repository": "https://github.com/hanibalsk/claude-marketplace",
+  "license": "MIT",
+  "keywords": ["nuxt", "vue", "typescript", "setup", "lsp", "dependencies", "volar", "frontend"]
+}
