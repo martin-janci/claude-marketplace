@@ -63,6 +63,17 @@
         "url": "https://github.com/hanibalsk"
       },
       "keywords": ["stories", "features", "issues", "testing", "exploration", "development", "parallel"]
+    },
+    {
+      "name": "k8s-toolkit",
+      "version": "1.0.0",
+      "description": "Kubernetes operations toolkit - cluster management, debugging, manifest generation, deployment automation, and k9s UI navigation",
+      "source": "./plugins/k8s-toolkit",
+      "author": {
+        "name": "hanibalsk",
+        "url": "https://github.com/hanibalsk"
+      },
+      "keywords": ["kubernetes", "k8s", "kubectl", "k9s", "devops", "deployment", "debugging", "manifests", "gitops", "helm"]
     }
   ]
 }
